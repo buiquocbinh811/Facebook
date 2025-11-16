@@ -1,9 +1,7 @@
-# 🚀 LỘ TRÌNH FACEBOOK CLONE - 1 THÁNG (30 NGÀY)
 ## React + Vite + Node.js + Express + MongoDB + JWT
 
 ---
 
-## 📁 CẤU TRÚC DỰ ÁN HOÀN CHỈNH
 
 ```
 facebook-clone/
@@ -106,9 +104,6 @@ facebook-clone/
 
 ---
 
-## 🎯 LỘ TRÌNH 30 NGÀY (CHI TIẾT)
-
-### ✅ TUẦN 1: SETUP & AUTHENTICATION (Ngày 1-7)
 
 #### **Ngày 1-2: Setup Project**
 - [ ] Setup Frontend (React + Vite) ✅ (Đã xong!)
