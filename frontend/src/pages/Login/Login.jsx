@@ -8,13 +8,13 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Login:', { email, password });
-    // TODO: Gọi API login
+
   };
 
   return (
     <div className="login-container">
       <div className="login-box">
-        <h1>Facebook Clone</h1>
+        <h1>Facebook</h1>
         <p>Đăng nhập để tiếp tục</p>
         
         <form onSubmit={handleSubmit}>
