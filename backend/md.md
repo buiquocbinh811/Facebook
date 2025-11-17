@@ -1,3 +1,4 @@
+
 ## React + Vite + Node.js + Express + MongoDB + JWT
 
 ---
@@ -104,6 +105,9 @@ facebook-clone/
 
 ---
 
+## 🎯 LỘ TRÌNH 30 NGÀY (CHI TIẾT)
+
+### ✅ TUẦN 1: SETUP & AUTHENTICATION (Ngày 1-7)
 
 #### **Ngày 1-2: Setup Project**
 - [ ] Setup Frontend (React + Vite) ✅ (Đã xong!)

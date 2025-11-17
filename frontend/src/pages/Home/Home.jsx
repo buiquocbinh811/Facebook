@@ -220,13 +220,7 @@ function Home() {
                 
                 <div className="settings-divider"></div>
                 
-                <div 
-                  className="settings-item clickable"
-                  onClick={() => {
-                    setDarkMode(!darkMode);
-                    document.documentElement.setAttribute('data-theme', !darkMode ? 'dark' : 'light');
-                  }}
-                >
+                <div className="settings-item">
                   <div className="settings-icon">
                     {darkMode ? <BsMoon size={20} /> : <BsSun size={20} />}
                   </div>
@@ -236,31 +230,51 @@ function Home() {
                   </div>
                 </div>
                 
-                {darkMode && (
-                  <div className="theme-options">
-                    <div className="theme-option active">
-                      <input type="radio" name="theme" checked readOnly />
-                      <label>
-                        <strong>Tắt</strong>
-                        <p>Màu sáng</p>
-                      </label>
-                    </div>
-                    <div className="theme-option">
-                      <input type="radio" name="theme" />
-                      <label>
-                        <strong>Bật</strong>
-                        <p>Màu tối</p>
-                      </label>
-                    </div>
-                    <div className="theme-option">
-                      <input type="radio" name="theme" />
-                      <label>
-                        <strong>Tự động</strong>
-                        <p>Tự động điều chỉnh theo thiết bị</p>
-                      </label>
-                    </div>
+                <div className="theme-options">
+                  <div 
+                    className={`theme-option ${!darkMode ? 'active' : ''}`}
+                    onClick={() => {
+                      setDarkMode(false);
+                    }}
+                  >
+                    <input 
+                      type="radio" 
+                      name="theme" 
+                      checked={!darkMode} 
+                      onChange={() => setDarkMode(false)}
+                    />
+                    <label>
+                      <strong>Tắt</strong>
+                      <p>Màu sáng</p>
+                    </label>
                   </div>
-                )}
+                  
+                  <div 
+                    className={`theme-option ${darkMode ? 'active' : ''}`}
+                    onClick={() => {
+                      setDarkMode(true);
+                    }}
+                  >
+                    <input 
+                      type="radio" 
+                      name="theme" 
+                      checked={darkMode} 
+                      onChange={() => setDarkMode(true)}
+                    />
+                    <label>
+                      <strong>Bật</strong>
+                      <p>Màu tối</p>
+                    </label>
+                  </div>
+                  
+                  <div className="theme-option">
+                    <input type="radio" name="theme" />
+                    <label>
+                      <strong>Tự động</strong>
+                      <p>Tự động điều chỉnh theo thiết bị</p>
+                    </label>
+                  </div>
+                </div>
                 
                 <div className="settings-divider"></div>
                 
