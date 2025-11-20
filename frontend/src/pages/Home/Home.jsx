@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import postApi from '../../api/postApi';
+import Post from '../../components/Post';
 import { 
   AiOutlineHome, 
   AiFillHome,
@@ -40,7 +43,77 @@ function Home() {
   const [showMessenger, setShowMessenger] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [darkMode, setDarkMode] = useState(true); // Mặc định dark mode
+  const [darkMode, setDarkMode] = useState(true);
+  
+  // state cho posts
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [postContent, setPostContent] = useState('');
+  
+  const { user, logout } = useAuth();
+  
+  // lấy danh sách bài post khi vào trang
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+  
+  const fetchPosts = async () => {
+    try {
+      const response = await postApi.getPosts();
+      // Backend trả về  success, count, data , lấy array từ data
+      setPosts(response.data || []);
+    } catch (error) {
+      console.error('Lỗi khi lấy bài post:', error);
+      setPosts([]); // Set empty array nếu lỗi
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // tạo bài post mới
+  const handleCreatePost = async (e) => {
+    e.preventDefault();
+    if (!postContent.trim()) return;
+    
+    try {
+      const response = await postApi.createPost({ content: postContent });
+      // Backend trả về success, message, data  lấy post từ data
+      const newPost = response.data;
+      // thêm bài mới vào đầu danh sách
+      setPosts([newPost, ...posts]);
+      setPostContent('');
+    } catch (error) {
+      console.error('Lỗi khi tạo bài:', error);
+      alert('Không thể đăng bài. Vui lòng thử lại.');
+    }
+  };
+  
+  // xử lý like
+  const handleLike = async (postId) => {
+    try {
+      await postApi.likePost(postId);
+      // cập nhật lại danh sách sau khi like
+      fetchPosts();
+    } catch (error) {
+      console.error('Lỗi khi like:', error);
+    }
+  };
+  
+  // xử lý comment
+  const handleComment = async (postId, text) => {
+    try {
+      await postApi.commentPost(postId, { content: text });
+      // cập nhật lại danh sách sau khi comment
+      fetchPosts();
+    } catch (error) {
+      console.error('Lỗi khi comment:', error);
+    }
+  };
+  
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';
+  };
 
   // sample
   const messages = [
@@ -211,9 +284,11 @@ function Home() {
             {showSettings && (
               <div className="dropdown settings-dropdown">
                 <div className="settings-item">
-                  <div className="user-avatar small">B</div>
+                  <div className="user-avatar small">
+                    {user?.name?.charAt(0).toUpperCase() || 'U'}
+                  </div>
                   <div className="settings-info">
-                    <h4>Bùi Quốc Bình</h4>
+                    <h4>{user?.name || 'Người dùng'}</h4>
                     <p>Xem trang cá nhân của bạn</p>
                   </div>
                 </div>
@@ -294,7 +369,7 @@ function Home() {
                   </div>
                 </div>
                 
-                <div className="settings-item clickable logout">
+                <div className="settings-item clickable logout" onClick={handleLogout}>
                   <div className="settings-icon">🚪</div>
                   <div className="settings-info">
                     <h4>Đăng xuất</h4>
@@ -344,28 +419,55 @@ function Home() {
         <main className="main-feed">
           {/* Create Post Box */}
           <div className="create-post">
-            <div className="create-post-top">
-              <div className="user-avatar small">B</div>
-              <input type="text" placeholder="Bình ơi, bạn đang nghĩ gì thế?" />
-            </div>
-            <div className="create-post-bottom">
-              <button className="post-option">
-                <BsCameraVideoFill size={24} color="#f3425f" />
-                <span>Video trực tiếp</span>
-              </button>
-              <button className="post-option">
-                <MdOutlinePhotoLibrary size={24} color="#45bd62" />
-                <span>Ảnh/video</span>
-              </button>
-              <button className="post-option">
-                <MdOutlineEmojiEmotions size={24} color="#f7b928" />
-                <span>Cảm xúc/Hoạt động</span>
-              </button>
-            </div>
+            <form onSubmit={handleCreatePost}>
+              <div className="create-post-top">
+                <div className="user-avatar small">
+                  {user?.name?.charAt(0).toUpperCase() || 'U'}
+                </div>
+                <input 
+                  type="text" 
+                  placeholder={`${user?.name || 'Bạn'} ơi, bạn đang nghĩ gì thế?`}
+                  value={postContent}
+                  onChange={(e) => setPostContent(e.target.value)}
+                />
+              </div>
+              <div className="create-post-bottom">
+                <button type="button" className="post-option">
+                  <BsCameraVideoFill size={24} color="#f3425f" />
+                  <span>Video trực tiếp</span>
+                </button>
+                <button type="button" className="post-option">
+                  <MdOutlinePhotoLibrary size={24} color="#45bd62" />
+                  <span>Ảnh/video</span>
+                </button>
+                <button type="button" className="post-option">
+                  <MdOutlineEmojiEmotions size={24} color="#f7b928" />
+                  <span>Cảm xúc/Hoạt động</span>
+                </button>
+              </div>
+            </form>
           </div>
 
           {/* Posts - Hiển thị các bài viết */}
-          <div className="posts">
+          {loading ? (
+            <div className="loading">Đang tải bài viết...</div>
+          ) : posts.length === 0 ? (
+            <div className="no-posts">Chưa có bài viết nào. Hãy tạo bài viết đầu tiên!</div>
+          ) : (
+            <div className="posts">
+              {posts.map(post => (
+                <Post 
+                  key={post._id} 
+                  post={post}
+                  onLike={handleLike}
+                  onComment={handleComment}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Bài viết mẫu cũ - XÓA PHẦN NÀY */}
+          <div className="posts-old" style={{display: 'none'}}>
             {/* Post 1 - Mẫu */}
             <div className="post">
               <div className="post-header">

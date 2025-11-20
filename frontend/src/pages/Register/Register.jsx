@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 import './Register.css';
 
@@ -11,9 +12,11 @@ function Register() {
     confirmPassword: ''
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+  const { register } = useAuth();
 
   const handleChange = (e) => {
     setFormData({
@@ -22,7 +25,7 @@ function Register() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -41,9 +44,27 @@ function Register() {
       setError('Mật khẩu phải có ít nhất 6 ký tự');
       return;
     }
+    //call API to register user
 
-    console.log('Register:', formData);
-    // call API to register user 
+    setLoading(true);
+    
+    try {
+      // Gọi API đăng ký thông qua AuthContext
+      await register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      });
+      
+      // Nếu thành công thì chuyển sang trang Home
+      navigate('/home');
+    } catch (err) {
+      // Nếu lỗi thì hiển thị thông báo
+      console.error('Lỗi đăng ký:', err);
+      setError(err.response?.data?.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -105,8 +126,8 @@ function Register() {
             </button>
           </div>
           
-          <button type="submit" className="btn-register">
-            Đăng ký
+          <button type="submit" className="btn-register" disabled={loading}>
+            {loading ? 'Đang đăng ký...' : 'Đăng ký'}
           </button>
         </form>
         

@@ -879,6 +879,23 @@
   color: var(--text-secondary);
 }
 
+/* Loading và No Posts */
+.loading, .no-posts {
+  background: var(--bg-secondary);
+  padding: 40px 20px;
+  text-align: center;
+  border-radius: 8px;
+  color: var(--text-secondary);
+}
+
+.loading {
+  font-size: 16px;
+}
+
+.no-posts {
+  font-size: 15px;
+}
+
 /* Responsive */
 @media (max-width: 1100px) {
   .home-content {
