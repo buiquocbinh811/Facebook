@@ -59,10 +59,10 @@ function Post({ post, onLike, onComment }) {
         <p>{post.content}</p>
       </div>
       
-      {/* ảnh (nếu có) */}
-      {post.image && (
+     
+      {post.images && post.images.length > 0 && (
         <div className="post-image">
-          <img src={post.image} alt="Post" />
+          <img src={`http://localhost:5000${post.images[0]}`} alt="Post" />
         </div>
       )}
       
