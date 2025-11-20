@@ -62,7 +62,10 @@ function Post({ post, onLike, onComment }) {
      
       {post.images && post.images.length > 0 && (
         <div className="post-image">
-          <img src={`http://localhost:5000${post.images[0]}`} alt="Post" />
+          <img 
+            src={`${import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000'}${post.images[0]}`} 
+            alt="Post" 
+          />
         </div>
       )}
       
