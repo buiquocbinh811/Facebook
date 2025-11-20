@@ -15,11 +15,18 @@ const postApi = {
 
   // Tạo bài mới (có thể có ảnh)
   createPost: async (postData) => {
-    const response = await axiosInstance.post('/posts', postData, {
-      headers: {
-        'Content-Type': 'multipart/form-data', // Nếu có upload ảnh
-      },
-    });
+    // Nếu postData là FormData (có ảnh)
+    if (postData instanceof FormData) {
+      const response = await axiosInstance.post('/posts', postData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    }
+    
+    // Nếu chỉ có text
+    const response = await axiosInstance.post('/posts', postData);
     return response.data;
   },
 

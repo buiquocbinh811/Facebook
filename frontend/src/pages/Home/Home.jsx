@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import postApi from '../../api/postApi';
 import Post from '../../components/Post';
+import CreatePostModal from '../../components/CreatePostModal';
 import { 
   AiOutlineHome, 
   AiFillHome,
@@ -44,11 +45,11 @@ function Home() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
+  const [showCreatePostModal, setShowCreatePostModal] = useState(false);
   
   // state cho posts
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [postContent, setPostContent] = useState('');
   
   const { user, logout } = useAuth();
   
@@ -70,18 +71,22 @@ function Home() {
     }
   };
   
-  // tạo bài post mới
-  const handleCreatePost = async (e) => {
-    e.preventDefault();
-    if (!postContent.trim()) return;
-    
+  // tạo bài post mới từ modal
+  const handleCreatePost = async (postData) => {
     try {
-      const response = await postApi.createPost({ content: postContent });
-      // Backend trả về success, message, data  lấy post từ data
+      // creat FormData để tạo cả text và ảnh
+      const formData = new FormData();
+      formData.append('content', postData.content);
+      if (postData.image) {
+        formData.append('image', postData.image);
+      }
+
+      const response = await postApi.createPost(formData);
+      
+      // Backend trả về success, message, data , lấy post từ data
       const newPost = response.data;
-      // thêm bài mới vào đầu danh sách
+      // Thêm bài mới vào đầu danh sách
       setPosts([newPost, ...posts]);
-      setPostContent('');
     } catch (error) {
       console.error('Lỗi khi tạo bài:', error);
       alert('Không thể đăng bài. Vui lòng thử lại.');
@@ -386,8 +391,10 @@ function Home() {
         {/* Sidebar trái */}
         <aside className="sidebar-left">
           <div className="sidebar-item">
-            <div className="user-avatar small">B</div>
-            <span>Bùi Quốc Bình</span>
+            <div className="user-avatar small">
+              {user?.name?.charAt(0).toUpperCase() || 'U'}
+            </div>
+            <span>{user?.name || 'Người dùng'}</span>
           </div>
           <div className="sidebar-item">
             <HiUserGroup size={36} color="#2e89ff" />
@@ -419,34 +426,41 @@ function Home() {
         <main className="main-feed">
           {/* Create Post Box */}
           <div className="create-post">
-            <form onSubmit={handleCreatePost}>
-              <div className="create-post-top">
-                <div className="user-avatar small">
-                  {user?.name?.charAt(0).toUpperCase() || 'U'}
-                </div>
-                <input 
-                  type="text" 
-                  placeholder={`${user?.name || 'Bạn'} ơi, bạn đang nghĩ gì thế?`}
-                  value={postContent}
-                  onChange={(e) => setPostContent(e.target.value)}
-                />
+            <div className="create-post-top" onClick={() => setShowCreatePostModal(true)}>
+              <div className="user-avatar small">
+                {user?.name?.charAt(0).toUpperCase() || 'U'}
               </div>
-              <div className="create-post-bottom">
-                <button type="button" className="post-option">
-                  <BsCameraVideoFill size={24} color="#f3425f" />
-                  <span>Video trực tiếp</span>
-                </button>
-                <button type="button" className="post-option">
-                  <MdOutlinePhotoLibrary size={24} color="#45bd62" />
-                  <span>Ảnh/video</span>
-                </button>
-                <button type="button" className="post-option">
-                  <MdOutlineEmojiEmotions size={24} color="#f7b928" />
-                  <span>Cảm xúc/Hoạt động</span>
-                </button>
+              <div className="create-post-input-fake">
+                {user?.name || 'Bạn'} ơi, bạn đang nghĩ gì thế?
               </div>
-            </form>
+            </div>
+            <div className="create-post-bottom">
+              <button type="button" className="post-option">
+                <BsCameraVideoFill size={24} color="#f3425f" />
+                <span>Video trực tiếp</span>
+              </button>
+              <button 
+                type="button" 
+                className="post-option"
+                onClick={() => setShowCreatePostModal(true)}
+              >
+                <MdOutlinePhotoLibrary size={24} color="#45bd62" />
+                <span>Ảnh/video</span>
+              </button>
+              <button type="button" className="post-option">
+                <MdOutlineEmojiEmotions size={24} color="#f7b928" />
+                <span>Cảm xúc/Hoạt động</span>
+              </button>
+            </div>
           </div>
+          
+          {/* Modal tạo bài post */}
+          <CreatePostModal 
+            isOpen={showCreatePostModal}
+            onClose={() => setShowCreatePostModal(false)}
+            user={user}
+            onSubmit={handleCreatePost}
+          />
 
           {/* Posts - Hiển thị các bài viết */}
           {loading ? (
@@ -466,55 +480,7 @@ function Home() {
             </div>
           )}
 
-          {/* Bài viết mẫu cũ - XÓA PHẦN NÀY */}
-          <div className="posts-old" style={{display: 'none'}}>
-            {/* Post 1 - Mẫu */}
-            <div className="post">
-              <div className="post-header">
-                <div className="post-user">
-                  <div className="user-avatar small">T</div>
-                  <div className="post-user-info">
-                    <h4>TTGshop</h4>
-                    <span>9 phút · 🌐</span>
-                  </div>
-                </div>
-                <button className="post-menu">
-                  <BsThreeDots size={20} />
-                </button>
-              </div>
-
-              <div className="post-content">
-                <p>K thể làm kịp được CTKM tháng 11 làyyyy. Giá thay đổi liên tục haizz. Hnay giá PC sẽ tiếp tục tăng🚀, sorry các tình iuu😢Vũ k thể làm gì # được🤷</p>
-              </div>
-
-              <div className="post-image">
-                <img 
-                  src="https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=600&h=400&fit=crop" 
-                  alt="PC Gaming Setup"
-                />
-              </div>
-
-              <div className="post-stats">
-                <span>👍❤️ 15</span>
-                <span>2 bình luận</span>
-              </div>
-
-              <div className="post-actions">
-                <button className="action-btn">
-                  <AiOutlineLike size={20} />
-                  <span>Thích</span>
-                </button>
-                <button className="action-btn">
-                  <AiOutlineComment size={20} />
-                  <span>Bình luận</span>
-                </button>
-                <button className="action-btn">
-                  <AiOutlineShareAlt size={20} />
-                  <span>Chia sẻ</span>
-                </button>
-              </div>
-            </div>
-          </div>
+          
         </main>
 
         {/* Sidebar phải */}

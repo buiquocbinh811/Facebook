@@ -545,20 +545,23 @@
   border-bottom: 1px solid #3a3b3c;
 }
 
-.create-post-top input {
+.create-post-top {
+  cursor: pointer;
+}
+
+.create-post-input-fake {
   flex: 1;
   background: var(--bg-tertiary);
   border: none;
   padding: 10px 12px;
   border-radius: 50px;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   font-size: 15px;
-  outline: none;
-  transition: background 0.3s ease;
+  transition: background 0.2s ease;
 }
 
-.create-post-top input::placeholder {
-  color: var(--text-secondary);
+.create-post-top:hover .create-post-input-fake {
+  background: var(--hover);
 }
 
 .create-post-bottom {
