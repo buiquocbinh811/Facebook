@@ -4,7 +4,7 @@ import User from '../models/User.js';
 // Tạo bài đăng mới
 export const createPost = async (req, res) => {
   try {
-    const { content, images } = req.body;
+    const { content } = req.body;
 
     if (!content) {
       return res.status(400).json({
@@ -13,10 +13,13 @@ export const createPost = async (req, res) => {
       });
     }
 
+    // Lấy đường dẫn ảnh nếu có upload
+    const images = req.file ? [`/images/${req.file.filename}`] : [];
+
     const post = await Post.create({
-      user: req.user._id,
+      user: req.user.id || req.user._id,
       content,
-      images: images || []
+      images
     });
 
     const populatedPost = await Post.findById(post._id)
