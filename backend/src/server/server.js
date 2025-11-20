@@ -43,6 +43,12 @@ app.use((req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
-});
+// Chỉ listen khi chạy local, không listen trên Vercel
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`✅ Server đang chạy tại http://localhost:${PORT}`);
+  });
+}
+
+// Export cho Vercel
+export default app;
