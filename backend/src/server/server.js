@@ -17,8 +17,8 @@ const app = express();
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://facebookfc.vercel.app', //
-  'https://*.vercel.app' // Cho phép tất cả subdomain vercel
+  'https://facebookffc.vercel.app', //
+  'https://*.vercel.app' // all subdomain vercel tạm
 ];
 
 app.use(cors({
