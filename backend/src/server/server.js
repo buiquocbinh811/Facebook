@@ -17,8 +17,9 @@ const app = express();
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://facebookffc.vercel.app', //
-  'https://*.vercel.app' // all subdomain vercel tạm
+  'https://facebookffc.vercel.app',
+  'https://facebookbbc.vercel.app', 
+  'https://*.vercel.app' // vercel subdomain
 ];
 
 app.use(cors({
@@ -26,13 +27,8 @@ app.use(cors({
     // Cho phép requests không có origin (mobile apps, curl, postman)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.some(allowed => {
-      if (allowed.includes('*')) {
-        const regex = new RegExp(allowed.replace('*', '.*'));
-        return regex.test(origin);
-      }
-      return allowed === origin;
-    })) {
+    // Cho phép localhost và tất cả domain .vercel.app
+    if (origin.includes('localhost') || origin.endsWith('.vercel.app')) {
       return callback(null, true);
     }
     
