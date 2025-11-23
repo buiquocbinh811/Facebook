@@ -15,14 +15,30 @@ connectDB();
 
 const app = express();
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://facebookfc.vercel.app', //
+  'https://*.vercel.app' // Cho phép tất cả subdomain vercel
+];
+
 app.use(cors({
-  origin: [
-    'https://facebookkfc.vercel.app',
-    'http://localhost:5173'
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: function(origin, callback) {
+    // Cho phép requests không có origin (mobile apps, curl, postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.some(allowed => {
+      if (allowed.includes('*')) {
+        const regex = new RegExp(allowed.replace('*', '.*'));
+        return regex.test(origin);
+      }
+      return allowed === origin;
+    })) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
 }));
 app.use(express.json());
 
