@@ -59,12 +59,16 @@ function Post({ post, onLike, onComment }) {
         <p>{post.content}</p>
       </div>
       
-     
+      {/* Hiển thị ảnh nếu có */}
       {post.images && post.images.length > 0 && (
         <div className="post-image">
           <img 
-            src={`${import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000'}${post.images[0]}`} 
+            src={post.images[0]}
             alt="Post" 
+            onError={(e) => {
+              console.error('Image load error:', post.images[0]);
+              e.target.style.display = 'none';
+            }}
           />
         </div>
       )}

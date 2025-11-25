@@ -74,22 +74,37 @@ function Home() {
   // tạo bài post mới từ modal
   const handleCreatePost = async (postData) => {
     try {
+      console.log('Creating post with data:', postData);
+      
       // creat FormData để tạo cả text và ảnh
       const formData = new FormData();
-      formData.append('content', postData.content);
+      formData.append('content', postData.content || '');
+      
+      // Append image với field name 'images' (backend expect array)
       if (postData.image) {
-        formData.append('image', postData.image);
+        formData.append('images', postData.image);
+        console.log('Image attached:', postData.image);
+      }
+
+      console.log('FormData entries:');
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
       }
 
       const response = await postApi.createPost(formData);
+      console.log('Create post response:', response);
       
       // Backend trả về success, message, data , lấy post từ data
       const newPost = response.data;
       // Thêm bài mới vào đầu danh sách
       setPosts([newPost, ...posts]);
+      
+      // Đóng modal
+      setShowCreatePostModal(false);
     } catch (error) {
       console.error('Lỗi khi tạo bài:', error);
-      alert('Không thể đăng bài. Vui lòng thử lại.');
+      console.error('Error response:', error.response);
+      alert('Không thể đăng bài: ' + (error.response?.data?.message || error.message));
     }
   };
   
