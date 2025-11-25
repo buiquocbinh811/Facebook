@@ -9,11 +9,11 @@ import {
   addComment
 } from '../controllers/postController.js';
 import { protect } from '../middleware/authMiddleware.js';
-import upload from '../middleware/upload.js';
+import { upload } from '../config/cloudinary.js';
 
 const router = express.Router();
 
-router.post('/', protect, upload.single('image'), createPost);
+router.post('/', protect, upload.array('images', 10), createPost);
 router.get('/', protect, getAllPosts);
 router.get('/:id', protect, getPostById);
 router.put('/:id', protect, updatePost);

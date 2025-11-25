@@ -4,26 +4,39 @@ import User from '../models/User.js';
 // Tạo bài đăng mới
 export const createPost = async (req, res) => {
   try {
+    console.log('=== CREATE POST DEBUG ===');
+    console.log('Body:', req.body);
+    console.log('Files:', req.files);
+    console.log('User:', req.user);
+    
     const { content } = req.body;
 
-    if (!content) {
+    if (!content && (!req.files || req.files.length === 0)) {
       return res.status(400).json({
         success: false,
-        message: 'Vui lòng nhập nội dung bài đăng'
+        message: 'Vui lòng nhập nội dung hoặc chọn ảnh'
       });
     }
 
-    // Lấy đường dẫn ảnh nếu có upload
-    const images = req.file ? [`/images/${req.file.filename}`] : [];
+    // Lấy Cloudinary URLs từ uploaded files
+    // Cloudinary trả về file.path chứa secure_url
+    const images = req.files ? req.files.map(file => {
+      console.log('File object:', file);
+      return file.path; // Cloudinary secure_url
+    }) : [];
+    
+    console.log('Images URLs:', images);
 
     const post = await Post.create({
       user: req.user.id || req.user._id,
-      content,
+      content: content || '',
       images
     });
 
     const populatedPost = await Post.findById(post._id)
       .populate('user', 'name avatar');
+
+    console.log('Post created successfully:', populatedPost);
 
     res.status(201).json({
       success: true,
@@ -31,10 +44,11 @@ export const createPost = async (req, res) => {
       data: populatedPost
     });
   } catch (error) {
+    console.error('Error creating post:', error);
     res.status(500).json({
       success: false,
-      message: 'Lỗi server',
-      error: error.message
+      message: 'Lỗi server: ' + error.message,
+      error: error.stack
     });
   }
 };

@@ -10,7 +10,7 @@ import postRoutes from './routes/posts.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.join(__dirname, '../.env') });
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 connectDB();
 
 const app = express();
@@ -19,7 +19,6 @@ const allowedOrigins = [
   'http://localhost:5173',
   'https://facebookffc.vercel.app',
   'https://facebookbbc.vercel.app', 
-  'https://*.vercel.app' // vercel subdomain
 ];
 
 app.use(cors({
