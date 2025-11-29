@@ -1,0 +1,30 @@
+{
+  "name": "facebook-websocket-server",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "WebSocket server for Facebook Clone real-time features",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "websocket",
+    "socket.io",
+    "video-call",
+    "livestream"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.3",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
