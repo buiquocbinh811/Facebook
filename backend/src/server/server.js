@@ -6,6 +6,8 @@ import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import postRoutes from './routes/posts.js';
+import friendRoutes from './routes/friends.js';
+import userRoutes from './routes/users.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -53,6 +55,8 @@ app.get('/', (req, res) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/friends', friendRoutes);
+app.use('/api/users', userRoutes);
 
 // 404
 app.use((req, res) => {
