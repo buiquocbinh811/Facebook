@@ -3,6 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 import postApi from '../../api/postApi';
 import Post from '../../components/Post';
 import CreatePostModal from '../../components/CreatePostModal';
+import FriendRequest from '../../components/FriendRequest';
+import SearchUsers from '../../components/SearchUsers/SearchUsers';
 import { 
   AiOutlineHome, 
   AiFillHome,
@@ -500,6 +502,9 @@ function Home() {
 
         {/* Sidebar phải */}
         <aside className="sidebar-right">
+          <SearchUsers />
+          <FriendRequest />
+          
           <h3>Người liên hệ</h3>
           <div className="contact-item">
             <div className="meta-ai-avatar">
